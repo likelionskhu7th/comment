@@ -7,7 +7,7 @@ from .forms import ArticleForm
 # Create your views here.
 def board(request):
     articles = Article.objects.all()
-    return render(request, "blog/borad.html", {"articles": articles})
+    return render(request, "blog/board.html", {"articles": articles})
 
 
 def detail(request, article_id):
