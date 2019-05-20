@@ -1,4 +1,5 @@
 {% extends 'index.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <div class="container">
@@ -15,12 +16,14 @@
             <div class="jumbotron jumbotron-fluid">
                 <div class="container">
                     <h1 class="display-4">{{ comment.comment_text }}</h1>
+                    <a class="btn btn-secondary" href="{% url 'blog:comment_edit' article.id comment.id %}" role="button">수정</a>
+                    <a class="btn btn-danger" href="{% url 'blog:comment_delete' article.id comment.id %}" role="button">삭제</a>
                 </div>
             </div>
         {% endfor %}
         <form method="post">
             {% csrf_token %}
-            {{ form}}
+            {{ form | crispy }}
             <input class="btn btn-primary" type="submit" value="Submit">
         </form>
     </div>
