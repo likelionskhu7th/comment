@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from .models import Article
-from .forms import ArticleForm
+from .forms import ArticleForm, CommentForm
 
 
 # Create your views here.
@@ -12,7 +12,17 @@ def board(request):
 
 def detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    return render(request, "blog/detail.html", {"article": article})
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.article_id = article
+            comment.comment_text = form.cleaned_data["comment_text"]
+            comment.save()
+            return redirect("blog:detail", article_id)
+    else:
+        form = CommentForm()
+        return render(request, "blog/detail.html", {"article": article, "form": form})
 
 
 def post_form(request, article_id=None):
