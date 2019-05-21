@@ -16,7 +16,7 @@ def detail(request, article_id):
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.article_id = article
+            comment.article = article
             comment.comment_text = form.cleaned_data["comment_text"]
             comment.save()
             return redirect("blog:detail", article_id)
@@ -40,24 +40,25 @@ def post_form(request, article_id=None):
         return render(request, "blog/post.html", {'form': form})
 
 
-def comment_delete(request, article_id, comment_id):
+def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     comment.delete()
-    return redirect("blog:detail", article_id)
+    return redirect("blog:detail", comment.article.id)
 
 
-def comment_edit(request, article_id, comment_id):
+def comment_edit(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
+    article = comment.article
     if request.method == "POST":
         form = CommentForm(request.POST, instance=comment)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.comment_text = form.cleaned_data["comment_text"]
             comment.save()
-            return redirect("blog:detail", article_id)
+            return redirect("blog:detail", article.id)
     else:
         form = CommentForm(instance=comment)
-        return render(request, "blog/post.html", {"article": article_id, "form": form})
+        return render(request, "blog/post.html", {"form": form})
 
 
 def post_new(request):
